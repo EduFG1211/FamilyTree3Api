@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, Person, Person
 #from models import Person
 
 app = Flask(__name__)
@@ -38,6 +38,22 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/person', methods=['GET'])
+def get_person():    
+    return jsonify(Person.getAllPerson()), 200
+
+@app.route('/member/<int:id>', methods=['GET'])
+def get_member(id):
+    person = Person.getSpecificMember(id)
+    parents = Person.getAllParent(id)
+    sons = Person.getAllSons(id)
+    familyTree = {
+        "person": person,
+        "parents": parents,
+        "sons": sons
+    }
+    return jsonify(familyTree), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
